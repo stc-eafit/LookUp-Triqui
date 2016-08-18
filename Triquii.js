@@ -20,6 +20,26 @@ var Jugador = (function () {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(Jugador.prototype, "PartidasEmpatadas", {
+        get: function () {
+            return this.partidasEmpatadas;
+        },
+        set: function (partidasEmp) {
+            this.partidasEmpatadas = partidasEmp;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Jugador.prototype, "PartidasPerdidas", {
+        get: function () {
+            return this.partidasPerdidas;
+        },
+        set: function (partidasPer) {
+            this.partidasPerdidas = partidasPer;
+        },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(Jugador.prototype, "Caracter", {
         get: function () {
             return this.caracter;
@@ -55,7 +75,8 @@ var Partida = (function () {
     Partida.prototype.inicio = function () {
         this.tablero = [[2, 2, 2], [2, 2, 2,], [2, 2, 2]];
         this.maquina = new Maquina(0);
-        this.persona = new Maquina(1);
+        this.persona = new Jugador(1);
+        this.partidaActiva = true;
     };
     Partida.prototype.dibujarJugada = function (ctx, caracter) {
         if (caracter == Partida.CARACTER_O) {
@@ -81,57 +102,111 @@ var Partida = (function () {
             ctx.stroke();
         }
     };
-    Partida.prototype.revisarMovimiento = function (idCanvas, caracter) {
-        var numero = parseInt(idCanvas.charAt(1));
-        $('#' + idCanvas).unbind('click');
-        var canvas = $('#' + idCanvas)[0];
-        var ctx = canvas.getContext('2d');
-        this.dibujarJugada(ctx, caracter);
-        //alert(idCanvas);
-        switch (numero) {
-            case 0:
-                this.tablero[0][0] = caracter;
-                break;
-            case 1:
-                this.tablero[0][1] = caracter;
-                break;
-            case 2:
-                this.tablero[0][2] = caracter;
-                break;
-            case 3:
-                this.tablero[1][0] = caracter;
-                break;
-            case 4:
-                this.tablero[1][1] = caracter;
-                break;
-            case 5:
-                this.tablero[1][2] = caracter;
-                break;
-            case 6:
-                this.tablero[2][0] = caracter;
-                break;
-            case 7:
-                this.tablero[2][1] = caracter;
-                break;
-            case 8:
-                this.tablero[2][2] = caracter;
-                break;
-            default:
-                break;
+    Partida.prototype.revisarMovimiento = function (idCanvas) {
+        if (this.partidaActiva) {
+            var caracter = this.persona.Caracter;
+            var numero = parseInt(idCanvas.charAt(1));
+            $('#' + idCanvas).unbind('click');
+            var canvas = $('#' + idCanvas)[0];
+            var ctx = canvas.getContext('2d');
+            this.dibujarJugada(ctx, caracter);
+            //alert(idCanvas);
+            switch (numero) {
+                case 0:
+                    this.tablero[0][0] = caracter;
+                    break;
+                case 1:
+                    this.tablero[0][1] = caracter;
+                    break;
+                case 2:
+                    this.tablero[0][2] = caracter;
+                    break;
+                case 3:
+                    this.tablero[1][0] = caracter;
+                    break;
+                case 4:
+                    this.tablero[1][1] = caracter;
+                    break;
+                case 5:
+                    this.tablero[1][2] = caracter;
+                    break;
+                case 6:
+                    this.tablero[2][0] = caracter;
+                    break;
+                case 7:
+                    this.tablero[2][1] = caracter;
+                    break;
+                case 8:
+                    this.tablero[2][2] = caracter;
+                    break;
+                default:
+                    break;
+            }
+            ;
+            if (!this.verSiTerminoPartida()) {
+                var jugadaMaquina = this.maquina.realizarJugada(this.tablero);
+                var etiqueta = Partida.tableroEtiquetas[jugadaMaquina[0]][jugadaMaquina[1]];
+                $('#' + etiqueta).unbind('click');
+                canvas = $('#' + etiqueta)[0];
+                var ctx = canvas.getContext('2d');
+                caracter = this.maquina.Caracter;
+                this.dibujarJugada(ctx, caracter);
+                if (this.verSiTerminoPartida()) {
+                    this.partidaActiva = false;
+                    alert("Fin partida gana maquina");
+                }
+            }
+            else {
+                this.partidaActiva = false;
+                alert("Fin partida Gana persona");
+            }
         }
-        ;
-        var jugadaMaquina = this.maquina.realizarJugada(this.tablero);
-        var etiqueta = Partida.tableroEtiquetas[jugadaMaquina[0]][jugadaMaquina[1]];
-        $('#' + etiqueta).unbind('click');
-        canvas = $('#' + etiqueta)[0];
-        ctx = canvas.getContext('2d');
-        if (caracter == 0) {
-            caracter = 1;
+    };
+    Partida.prototype.verSiTerminoPartida = function () {
+        for (var comparador = 0; comparador < 2; comparador++) {
+            //Primera linea horizontal
+            if (this.tablero[0][0] == comparador && this.tablero[0][1] == comparador && this.tablero[0][2] == comparador) {
+                return true;
+            }
+            //Segunda linea horizontal
+            if (this.tablero[1][0] == comparador && this.tablero[1][1] == comparador && this.tablero[1][2] == comparador) {
+                return true;
+            }
+            //Tercera linea horizontal
+            if (this.tablero[2][0] == comparador && this.tablero[2][1] == comparador && this.tablero[2][2] == comparador) {
+                return true;
+            }
+            //Primera linea vertical
+            if (this.tablero[0][0] == comparador && this.tablero[1][0] == comparador && this.tablero[2][0] == comparador) {
+                return true;
+            }
+            //Segunda linea vertical
+            if (this.tablero[0][1] == comparador && this.tablero[1][1] == comparador && this.tablero[2][1] == comparador) {
+                return true;
+            }
+            //tercera linea vertical
+            if (this.tablero[0][2] == comparador && this.tablero[1][2] == comparador && this.tablero[2][2] == comparador) {
+                return true;
+            }
+            //diagonal de izquierda a derecha
+            if (this.tablero[0][0] == comparador && this.tablero[1][1] == comparador && this.tablero[2][2] == comparador) {
+                return true;
+            }
+            //diagonal de derecha a izquierda
+            if (this.tablero[0][2] == comparador && this.tablero[1][1] == comparador && this.tablero[2][0] == comparador) {
+                return true;
+            }
         }
-        else {
-            caracter = 0;
+        //Revisar si se lleno la matriz
+        for (var i = 0; i < this.tablero.length; i++) {
+            for (var j = 0; j < this.tablero[0].length; j++) {
+                if (this.tablero[i][j] == 2) {
+                    return false;
+                }
+            }
         }
-        this.dibujarJugada(ctx, caracter);
+        alert("Empate");
+        return true;
     };
     Partida.tableroEtiquetas = [['c0', 'c1', 'c2'], ['c3', 'c4', 'c5'], ['c6', 'c7', 'c8']];
     Partida.CARACTER_O = 0;
@@ -141,12 +216,29 @@ var Partida = (function () {
 /**
  * Inicio de Listeners
  */
-function cargarListeners() {
-    $('.canvas-seleccion').bind('click', function (eventoJQuery) {
-        //TODO
-        juego.revisarMovimiento(eventoJQuery.target.id, 0);
+function reiniciar() {
+    juego.inicio();
+    limpiarCanvas();
+    cargarListeners();
+}
+function limpiarCanvas() {
+    $('.canvas-seleccion').each(function (index, elem) {
+        var can = elem;
+        var context = can.getContext('2d');
+        context.clearRect(0, 0, can.width, can.height);
     });
 }
+function cargarListeners() {
+    $('.canvas-seleccion').unbind('click');
+    $('.canvas-seleccion').bind('click', function (eventoJQuery) {
+        //TODO
+        juego.revisarMovimiento(eventoJQuery.target.id);
+    });
+    $('#reiniciar').bind('click', reiniciar);
+}
+/**
+ * Inicio de partida
+*/
 var juego = new Partida();
 juego.inicio();
 $(cargarListeners);
