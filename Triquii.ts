@@ -1,3 +1,4 @@
+'use strict';
 class Jugador{
     private partidasGanadas : number;
     private letra : string;
@@ -32,7 +33,13 @@ class partida{
  * Inicio de Listeners
  */
 function CargarListeners() : void{
-    document.getElementById("");
+    console.log("Evento");
+   var canvasElementos : NodeListOf<HTMLCanvasElement> = <NodeListOf<HTMLCanvasElement>>document.getElementsByClassName('canvas-seleccion');
+   for(var i = 0;i < canvasElementos.length;++i){
+       canvasElementos[i].addEventListener('click',(ev: MouseEvent)=>{
+           var id : string = ev.srcElement.id
+           alert(id);
+       });
+   }
 }
-
-document.onload = CargarListeners;
+document.addEventListener("DOMContentLoaded",CargarListeners);

@@ -1,3 +1,4 @@
+'use strict';
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -46,6 +47,13 @@ var partida = (function () {
  * Inicio de Listeners
  */
 function CargarListeners() {
-    document.getElementById("");
+    console.log("Evento");
+    var canvasElementos = document.getElementsByClassName('canvas-seleccion');
+    for (var i = 0; i < canvasElementos.length; ++i) {
+        canvasElementos[i].addEventListener('click', function (ev) {
+            var id = ev.srcElement.id;
+            alert(id);
+        });
+    }
 }
-document.onload = CargarListeners;
+document.addEventListener("DOMContentLoaded", CargarListeners);
