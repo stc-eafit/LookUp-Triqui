@@ -4,8 +4,15 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-// TODO actualizar puntaje y mostrarlo
+/**
+ * Representa un jugador
+ */
 var Jugador = (function () {
+    /**
+     * Constructor del objeto Jugador
+     * @param {number} letra - letra del jugador en numero 0 = O, 1 = X
+     * @constructor
+     */
     function Jugador(letra) {
         this.partidasGanadas = 0;
         this.partidasPerdidas = 0;
@@ -190,6 +197,7 @@ var Partida = (function () {
         actualizarPuntuaciones(this.persona.estadisticasATexto(), this.maquina.estadisticasATexto());
     };
     Partida.prototype.empate = function () {
+        mostrarGananor("Nadie, hay un empate");
         this.maquina.empatar();
         this.persona.empatar();
         actualizarPuntuaciones(this.persona.estadisticasATexto(), this.maquina.estadisticasATexto());
@@ -317,10 +325,8 @@ function mostrarGananor(ganador) {
 function actualizarPuntuaciones(textoPersona, textoMaquina) {
     var txMaquina = $('#datos-maquina')[0];
     txMaquina.value = textoMaquina;
-    console.log(textoMaquina);
     var txPersona = $('#datos-persona')[0];
     txPersona.value = textoPersona;
-    console.log(textoPersona);
 }
 /**
  * Inicio de Listeners

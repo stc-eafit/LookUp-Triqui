@@ -1,6 +1,8 @@
 /// <reference path="jquery.d.ts" />
 
-// TODO actualizar puntaje y mostrarlo
+/**
+ * Representa un jugador
+ */
 class Jugador{
     private partidasGanadas : number;
     private partidasEmpatadas : number;
@@ -25,6 +27,11 @@ class Jugador{
     set PartidasPerdidas(partidasPer:number){
         this.partidasPerdidas = partidasPer;
     }
+    /**
+     * Constructor del objeto Jugador
+     * @param {number} letra - letra del jugador en numero 0 = O, 1 = X
+     * @constructor
+     */
     constructor(letra){
         this.partidasGanadas = 0;
         this.partidasPerdidas = 0;
@@ -64,7 +71,6 @@ class Maquina extends Jugador{
         return [fila,columna];
     }
 }
-
 class Partida{
     private tablero : number[][] = [[2,2,2],[2,2,2,],[2,2,2]];
     static tableroEtiquetas : string[][] = [['c0','c1','c2'],['c3','c4','c5'],['c6','c7','c8']]; 
@@ -156,11 +162,9 @@ class Partida{
                 this.dibujarJugada(ctx,caracter);
                 if(this.verSiTerminoPartida()){
                     this.partidaActiva = false;
-                    //alert("Fin partida gana maquina");
                 }
             }else{
                 this.partidaActiva = false;
-                //alert("Fin partida Gana persona");
             }
         }
     }
@@ -177,6 +181,7 @@ class Partida{
         actualizarPuntuaciones(this.persona.estadisticasATexto(),this.maquina.estadisticasATexto());
     }
     private empate(): void{
+        mostrarGananor("Nadie, hay un empate");
         this.maquina.empatar();
         this.persona.empatar();
         actualizarPuntuaciones(this.persona.estadisticasATexto(),this.maquina.estadisticasATexto());
@@ -292,10 +297,8 @@ function mostrarGananor(ganador: string): void{
 function actualizarPuntuaciones(textoPersona: string, textoMaquina:string){
     var txMaquina = <HTMLTextAreaElement>$('#datos-maquina')[0];
     txMaquina.value = textoMaquina;
-    console.log(textoMaquina);
     var txPersona = <HTMLTextAreaElement>$('#datos-persona')[0];
     txPersona.value = textoPersona;
-    console.log(textoPersona);
 }
 /**
  * Inicio de Listeners
