@@ -4,10 +4,12 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-// TODO resta comprobar quien gana, actualizar puntaje, agregar botones, Dialog para pedir circulo o cruz
+// TODO actualizar puntaje y mostrarlo
 var Jugador = (function () {
     function Jugador(letra) {
         this.partidasGanadas = 0;
+        this.partidasPerdidas = 0;
+        this.partidasEmpatadas = 0;
         this.caracter = letra;
     }
     Object.defineProperty(Jugador.prototype, "PartidasGanadas", {
@@ -47,6 +49,21 @@ var Jugador = (function () {
         enumerable: true,
         configurable: true
     });
+    Jugador.prototype.ganar = function () {
+        this.partidasGanadas++;
+    };
+    Jugador.prototype.perder = function () {
+        this.partidasPerdidas++;
+    };
+    Jugador.prototype.empatar = function () {
+        this.partidasEmpatadas++;
+    };
+    Jugador.prototype.estadisticasATexto = function () {
+        var estadisticas = "Partidas Ganadas: " + this.partidasGanadas + "\n";
+        estadisticas += ("Partidas Empatadas: " + this.partidasEmpatadas + "\n");
+        estadisticas += ("Partidas Perdidas: " + this.partidasPerdidas);
+        return estadisticas;
+    };
     return Jugador;
 }());
 var Maquina = (function (_super) {
@@ -71,11 +88,11 @@ var Maquina = (function (_super) {
 var Partida = (function () {
     function Partida() {
         this.tablero = [[2, 2, 2], [2, 2, 2,], [2, 2, 2]];
+        this.maquina = new Maquina(0);
+        this.persona = new Jugador(1);
     }
     Partida.prototype.inicio = function () {
         this.tablero = [[2, 2, 2], [2, 2, 2,], [2, 2, 2]];
-        this.maquina = new Maquina(0);
-        this.persona = new Jugador(1);
         this.partidaActiva = true;
     };
     Partida.prototype.dibujarJugada = function (ctx, caracter) {
@@ -153,47 +170,126 @@ var Partida = (function () {
                 this.dibujarJugada(ctx, caracter);
                 if (this.verSiTerminoPartida()) {
                     this.partidaActiva = false;
-                    alert("Fin partida gana maquina");
                 }
             }
             else {
                 this.partidaActiva = false;
-                alert("Fin partida Gana persona");
             }
         }
+    };
+    Partida.prototype.ganaMaquina = function () {
+        mostrarGananor("La Maquina");
+        this.maquina.ganar();
+        this.persona.perder();
+        actualizarPuntuaciones(this.persona.estadisticasATexto(), this.maquina.estadisticasATexto());
+    };
+    Partida.prototype.ganaPersona = function () {
+        mostrarGananor("La Persona");
+        this.maquina.perder();
+        this.persona.ganar();
+        actualizarPuntuaciones(this.persona.estadisticasATexto(), this.maquina.estadisticasATexto());
+    };
+    Partida.prototype.empate = function () {
+        this.maquina.empatar();
+        this.persona.empatar();
+        actualizarPuntuaciones(this.persona.estadisticasATexto(), this.maquina.estadisticasATexto());
     };
     Partida.prototype.verSiTerminoPartida = function () {
         for (var comparador = 0; comparador < 2; comparador++) {
             //Primera linea horizontal
             if (this.tablero[0][0] == comparador && this.tablero[0][1] == comparador && this.tablero[0][2] == comparador) {
+                if (comparador == 0) {
+                    //maquina
+                    this.ganaMaquina();
+                }
+                else {
+                    //Persona
+                    this.ganaPersona();
+                }
                 return true;
             }
             //Segunda linea horizontal
             if (this.tablero[1][0] == comparador && this.tablero[1][1] == comparador && this.tablero[1][2] == comparador) {
+                if (comparador == 0) {
+                    //maquina
+                    this.ganaMaquina();
+                }
+                else {
+                    //Persona
+                    this.ganaPersona();
+                }
                 return true;
             }
             //Tercera linea horizontal
             if (this.tablero[2][0] == comparador && this.tablero[2][1] == comparador && this.tablero[2][2] == comparador) {
+                if (comparador == 0) {
+                    //maquina
+                    this.ganaMaquina();
+                }
+                else {
+                    //Persona
+                    this.ganaPersona();
+                }
                 return true;
             }
             //Primera linea vertical
             if (this.tablero[0][0] == comparador && this.tablero[1][0] == comparador && this.tablero[2][0] == comparador) {
+                if (comparador == 0) {
+                    //maquina
+                    this.ganaMaquina();
+                }
+                else {
+                    //Persona
+                    this.ganaPersona();
+                }
                 return true;
             }
             //Segunda linea vertical
             if (this.tablero[0][1] == comparador && this.tablero[1][1] == comparador && this.tablero[2][1] == comparador) {
+                if (comparador == 0) {
+                    //maquina
+                    this.ganaMaquina();
+                }
+                else {
+                    //Persona
+                    this.ganaPersona();
+                }
                 return true;
             }
             //tercera linea vertical
             if (this.tablero[0][2] == comparador && this.tablero[1][2] == comparador && this.tablero[2][2] == comparador) {
+                if (comparador == 0) {
+                    //maquina
+                    this.ganaMaquina();
+                }
+                else {
+                    //Persona
+                    this.ganaPersona();
+                }
                 return true;
             }
             //diagonal de izquierda a derecha
             if (this.tablero[0][0] == comparador && this.tablero[1][1] == comparador && this.tablero[2][2] == comparador) {
+                if (comparador == 0) {
+                    //maquina
+                    this.ganaMaquina();
+                }
+                else {
+                    //Persona
+                    this.ganaPersona();
+                }
                 return true;
             }
             //diagonal de derecha a izquierda
             if (this.tablero[0][2] == comparador && this.tablero[1][1] == comparador && this.tablero[2][0] == comparador) {
+                if (comparador == 0) {
+                    //maquina
+                    this.ganaMaquina();
+                }
+                else {
+                    //Persona
+                    this.ganaPersona();
+                }
                 return true;
             }
         }
@@ -205,7 +301,7 @@ var Partida = (function () {
                 }
             }
         }
-        alert("Empate");
+        this.empate();
         return true;
     };
     Partida.tableroEtiquetas = [['c0', 'c1', 'c2'], ['c3', 'c4', 'c5'], ['c6', 'c7', 'c8']];
@@ -213,6 +309,19 @@ var Partida = (function () {
     Partida.CARACTER_X = 1;
     return Partida;
 }());
+function mostrarGananor(ganador) {
+    var snackbarContainer = $('#demo-toast-example')[0];
+    var data = { message: 'El ganador es ' + ganador, timeout: 5000 };
+    snackbarContainer.MaterialSnackbar.showSnackbar(data);
+}
+function actualizarPuntuaciones(textoPersona, textoMaquina) {
+    var txMaquina = $('#datos-maquina')[0];
+    txMaquina.value = textoMaquina;
+    console.log(textoMaquina);
+    var txPersona = $('#datos-persona')[0];
+    txPersona.value = textoPersona;
+    console.log(textoPersona);
+}
 /**
  * Inicio de Listeners
  */
@@ -234,6 +343,7 @@ function cargarListeners() {
         //TODO
         juego.revisarMovimiento(eventoJQuery.target.id);
     });
+    $('#reiniciar').unbind('click');
     $('#reiniciar').bind('click', reiniciar);
 }
 /**
